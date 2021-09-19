@@ -15,8 +15,8 @@ let db = null;
 const initializeDBAndServer = async () => {
   try {
     db = await open({ filename: dbPath, driver: sqlite3.Database });
-    app.listen(3000, () => {
-      console.log("Server Running at http://localhost:3000/");
+    app.listen(4000, () => {
+      console.log("Server Running at http://localhost:4000/");
     });
   } catch (e) {
     console.log(`DB Error: ${e.message}`);
@@ -41,7 +41,6 @@ const authenticateToken = (request, response, next) => {
         response.send("Invalid JWT Token");
       } else {
         request.username = payload.username;
-        request.user_id = payload.user_id;
         next();
       }
     });
@@ -115,8 +114,8 @@ app.get("/user/tweets/feed/", authenticateToken, async (request, response) => {
               tweet,
               date_time as dateTime
             FROM
-             user inner join tweet on user.user_id=tweet.user_id
-             inner join follower on tweet.user_id=follower.following_user_id
+             user inner join follower on user.user_id=follower.follower_user_id
+             inner join tweet on tweet.user_id=follower.following_user_id
             WHERE 
             user.username=username
             ORDER BY
@@ -144,7 +143,11 @@ app.get("/user/followers/", authenticateToken, async (request, response) => {
               DISTINCT name
             FROM
              user inner join follower on user.user_id=follower.follower_user_id
-            ORDER BY
+            WHERE 
+            username=username
+            GROUP BY
+            username
+             ORDER BY
              username=username;`;
 
   const booksArray = await db.all(getQuery);
@@ -171,8 +174,8 @@ app.get("/tweets/:tweetId/", authenticateToken, async (request, response) => {
     const v = `
             SELECT
               tweet,
-              count(like.like_id) as likes,
-              count(reply.reply_id) as replies,
+              count(like.user_id) as likes,
+              count(reply.user_id) as replies,
               tweet.date_time as dateTime
             FROM
              tweet left join like on tweet.tweet_id=like.tweet_id
@@ -219,7 +222,7 @@ app.get(
             tweet.tweet_id=${tweetId};`;
 
       const a = await db.all(v);
-      response.send(a);
+      response.send({ likes: a });
     }
   }
 );
@@ -246,10 +249,11 @@ app.get(
     } else {
       const v = `
             SELECT
-             DISTINCT name
+             DISTINCT name,reply
             FROM
-             user inner join reply on user.user_id=reply.user_id inner join
-             tweet on user.user_id=tweet.user_id 
+             user inner join tweet on user.user_id=tweet.user_id
+             left join reply on user.user_id=reply.user_id 
+              
             GROUP BY
             tweet.tweet_id
             HAVING
@@ -304,6 +308,7 @@ app.delete(
               *
             FROM
              user inner join tweet on user.user_id=tweet.user_id
+             inner join follower on tweet.user_id=follower.following_user_id
             WHERE
             tweet.tweet_id=${tweetId}
             and user.username=username`;

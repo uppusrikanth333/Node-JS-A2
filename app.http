@@ -20,7 +20,7 @@ Content-Type: application/json
 
 ####
 
-GET http://localhost:3000/user/tweets/feed/
+GET http://localhost:4000/user/tweets/feed/
 authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkpvZUJpZGVuIiwiaWF0IjoxNjMxMjU3NzE3fQ.-q3pjrsH4xrqeyB03o6frS6HBcRo6rTwO3hSEGIrRLY
 ####
 
@@ -44,7 +44,7 @@ authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkpvZ
 
 ####
 
-GET http://localhost:3000/tweets/2/replies
+GET http://localhost:3000/tweets/1/replies
 authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkpvZUJpZGVuIiwiaWF0IjoxNjMxMjU3NzE3fQ.-q3pjrsH4xrqeyB03o6frS6HBcRo6rTwO3hSEGIrRLY
 
 ####
@@ -65,5 +65,5 @@ Content-Type: application/json
 
 ####
 
-DELETE http://localhost:3000/tweets/3/
+DELETE http://localhost:3000/tweets/10/
 authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkpvZUJpZGVuIiwiaWF0IjoxNjMxMjU3NzE3fQ.-q3pjrsH4xrqeyB03o6frS6HBcRo6rTwO3hSEGIrRLY
